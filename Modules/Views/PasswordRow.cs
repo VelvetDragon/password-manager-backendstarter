@@ -33,12 +33,13 @@ namespace CSC317PassManagerP2Starter.Modules.Views
             get
             {
                 //complete getter for Platform.  currenly returns an empty string. 
-                return "";
+                return _pass.PlatformName;
             }
             set
             {
                 //complete setter for Platform.
-
+                _pass.PlatformName = value; 
+                
                 //This needs to be called for updating the binding when
                 //the platform name is edited.  Leave here.
                 RefreshRow();
@@ -50,7 +51,7 @@ namespace CSC317PassManagerP2Starter.Modules.Views
             get
             {
                 //Complete getter for User Name.
-                return "";
+                return _pass.UserID.ToString(); ;
             }
             set
             {
@@ -63,19 +64,24 @@ namespace CSC317PassManagerP2Starter.Modules.Views
         {
             get
             {
-               //complete getter for Password.  Currenly returns "hidden."
-               //This should return the actual password is the Show toggle
-               //is true.
-               //note that the password should be decrypted using the user's
-               //encryption key before being shown.
-               return "<hidden>";
+                //complete getter for Password.  Currenly returns "hidden."
+                //This should return the actual password is the Show toggle
+                //is true.
+                //note that the password should be decrypted using the user's
+                //encryption key before being shown.
+                if (_isVisible)
+                {
+                    // Decrypt the password if IsShown is true.
+                    return PasswordCrypto.Decrypt(_pass.PasswordText, Tuple.Create(App.LoginController.GetCurrentUser().Key, App.LoginController.GetCurrentUser().IV));
+                }
+                return "<hidden>";
             }
             set
             {
                 //complete setter for password.  Note that this ONLY changes the password
                 //stored in the row.  The password should not be committed to the model
                 //data until save is clicked.
-
+                _pass.PasswordText = PasswordCrypto.Encrypt(value, Tuple.Create(App.LoginController.GetCurrentUser().Key, App.LoginController.GetCurrentUser().IV));
 
                 RefreshRow();
             }
@@ -87,7 +93,7 @@ namespace CSC317PassManagerP2Starter.Modules.Views
             {
                 //complete getter for the pass ID.  Is binded to the edit/save/copy/delete buttons.
                 //currently returns -1;
-                return -1;
+                return _pass.ID;
             }
         }
 
@@ -97,11 +103,12 @@ namespace CSC317PassManagerP2Starter.Modules.Views
             {
                 //complete getter for IsShown, which is binded to the Show Password
                 //toggle/switch.
-                return false;
+                return _isVisible;
             }
             set
             {
                 //complete setter for IsShown.
+                _isVisible = value;
                 RefreshRow();
             }
         }
@@ -112,11 +119,12 @@ namespace CSC317PassManagerP2Starter.Modules.Views
             {
                 //Complete getter for Editing, which is toggled when the "edit/save" button
                 //is clicked.  
-                return false;
+                return _editing;
             }
             set
             {
                 //Complete setter for Editing.
+                _editing = value;
                 RefreshRow();
             }
         }
@@ -137,6 +145,7 @@ namespace CSC317PassManagerP2Starter.Modules.Views
         {
             //Is called when the "save" button is clicked.  Saves the changes to the
             //password to the model data.
+            App.PasswordController.UpdatePassword(_pass);
         }
     }
 
