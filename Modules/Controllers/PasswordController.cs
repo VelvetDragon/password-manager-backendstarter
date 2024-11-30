@@ -8,6 +8,7 @@ using CSC317PassManagerP2Starter.Modules.Controllers;
 using CSC317PassManagerP2Starter.Modules.Models;
 using CSC317PassManagerP2Starter.Modules.Views;
 
+
 namespace CSC317PassManagerP2Starter.Modules.Controllers
 {
     public class PasswordController
@@ -27,7 +28,7 @@ namespace CSC317PassManagerP2Starter.Modules.Controllers
             source.Clear();
             foreach (var password in _passwords)
             {
-                if (string.IsNullOrEmpty(search_criteria) || password.PlatformName == search_criteria)
+                if (string.IsNullOrEmpty(search_criteria) || password.PlatformName.ToLower() == search_criteria.ToLower())
                 {
                     source.Add(new PasswordRow(password));
                 }
@@ -51,19 +52,28 @@ namespace CSC317PassManagerP2Starter.Modules.Controllers
         {
             //Complete definition of GetPassword here.
             
-            return _passwords.FirstOrDefault(p => p.ID == ID);
+            foreach (var password in _passwords)
+            {
+                if (password.ID == ID)
+                {
+                    return password;
+                }
+            }
+            return null;   
         }
 
         public bool UpdatePassword(PasswordModel changes)
         {
             //Complete definition of Update Password here.
 
-            var password = _passwords.FirstOrDefault(p => p.ID == changes.ID);
-            if (password != null)
+            for (int i = 0; i < _passwords.Count; i++)
             {
-                password.PlatformName = changes.PlatformName;
-                password.PasswordText = changes.PasswordText;
-                return true;
+                if (_passwords[i].ID == changes.ID)
+                {
+                    _passwords[i].PlatformName = changes.PlatformName;
+                    _passwords[i].PasswordText = changes.PasswordText;
+                    return true;
+                }
             }
             return false;
         }
@@ -72,11 +82,13 @@ namespace CSC317PassManagerP2Starter.Modules.Controllers
         {
             //Complete definition of Remove Password here.
 
-            var password = _passwords.FirstOrDefault(p => p.ID == ID);
-            if (password != null)
+           for (int i=0; i < _passwords.Count; i++)
             {
-                _passwords.Remove(password);
-                return true;
+                if (_passwords[i].ID == ID)
+                {   //removing the password from the list at the index
+                    _passwords.RemoveAt(i);
+                    return true;
+                }
             }
             return false;
         }
@@ -88,8 +100,11 @@ namespace CSC317PassManagerP2Starter.Modules.Controllers
             var curr = App.LoginController.GetCurrentUser();
             if (curr != null)
             {
-                _passwords.Add(new PasswordModel(counter++, curr.ID, "Facebook", "fbPass", Tuple.Create(curr.Key, curr.IV)));
-                _passwords.Add(new PasswordModel(counter++, curr.ID, "Google", "googlePass", Tuple.Create(curr.Key, curr.IV)));
+                _passwords.Add(new PasswordModel(counter++, curr.ID, "USM Soar", "usm123", Tuple.Create(curr.Key, curr.IV)));
+                _passwords.Add(new PasswordModel(counter++, curr.ID, "Facebook", "su123", Tuple.Create(curr.Key, curr.IV)));
+                _passwords.Add(new PasswordModel(counter++, curr.ID, "Google", "aryal123", Tuple.Create(curr.Key, curr.IV)));
+                _passwords.Add(new PasswordModel(counter++, curr.ID, "Pinterest", "mypass123", Tuple.Create(curr.Key, curr.IV)));
+
             }
         }
     }
