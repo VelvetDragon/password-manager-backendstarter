@@ -1,10 +1,20 @@
-﻿using System;
+﻿/*
+    Program Author:  Suwan Aryal
+    USM ID: w10168297
+    Assignment: Password Manager, Part 2, Back-End
+    
+    Description:
+        This class translates PasswordModel data for display in the CollectionView. It adds states of toggle to show password and encrypt it when not shown. 
+*/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CSC317PassManagerP2Starter.Modules.Models;
+
 
 
 
@@ -38,12 +48,17 @@ namespace CSC317PassManagerP2Starter.Modules.Views
             set
             {
                 //complete setter for Platform.
-                _pass.PlatformName = value; 
-                
+                if (_pass.PlatformName != value)
+                {
+                    _pass.PlatformName = value;
+                   
+                }
+
                 //This needs to be called for updating the binding when
                 //the platform name is edited.  Leave here.
                 RefreshRow();
             }
+            
         }
 
         public string PlatformUserName
@@ -51,12 +66,18 @@ namespace CSC317PassManagerP2Starter.Modules.Views
             get
             {
                 //Complete getter for User Name.
-                return _pass.UserID.ToString(); ;
+                return _pass.PlatformUserName;
             }
             set
             {
                 //complete setter for User Name.
+                if (_pass.PlatformUserName != value)
+                {
+                    _pass.PlatformUserName = value;
+                    
+                }
                 RefreshRow();
+
             }
         }
 
@@ -69,20 +90,30 @@ namespace CSC317PassManagerP2Starter.Modules.Views
                 //is true.
                 //note that the password should be decrypted using the user's
                 //encryption key before being shown.
-                if (_isVisible)
+
+                var curr = App.LoginController.GetCurrentUser();
+
+                if (_isVisible && curr !=null)
                 {
-                    // Decrypt the password if IsShown is true.
-                    return PasswordCrypto.Decrypt(_pass.PasswordText, Tuple.Create(App.LoginController.GetCurrentUser().Key, App.LoginController.GetCurrentUser().IV));
+                    return PasswordCrypto.Decrypt(_pass.PasswordText, Tuple.Create(curr.Key, curr.IV)); 
                 }
-                return "<hidden>";
+                else
+                {
+                    return "<hidden>";
+                }
+                
             }
             set
             {
                 //complete setter for password.  Note that this ONLY changes the password
                 //stored in the row.  The password should not be committed to the model
                 //data until save is clicked.
-                _pass.PasswordText = PasswordCrypto.Encrypt(value, Tuple.Create(App.LoginController.GetCurrentUser().Key, App.LoginController.GetCurrentUser().IV));
-
+                var curr = App.LoginController.GetCurrentUser();
+                if (_isVisible && curr != null) 
+                {
+                    _pass.PasswordText = PasswordCrypto.Encrypt(value, Tuple.Create(curr.Key, curr.IV));
+                    
+                }
                 RefreshRow();
             }
         }
@@ -103,12 +134,17 @@ namespace CSC317PassManagerP2Starter.Modules.Views
             {
                 //complete getter for IsShown, which is binded to the Show Password
                 //toggle/switch.
-                return _isVisible;
+                return _isVisible ;
             }
             set
             {
                 //complete setter for IsShown.
-                _isVisible = value;
+                if (_isVisible != value)
+                {
+                    _isVisible = value;    
+                    
+                }
+
                 RefreshRow();
             }
         }
@@ -124,7 +160,11 @@ namespace CSC317PassManagerP2Starter.Modules.Views
             set
             {
                 //Complete setter for Editing.
-                _editing = value;
+                if (_editing != value)
+                {
+                    _editing = value; 
+              
+                }
                 RefreshRow();
             }
         }

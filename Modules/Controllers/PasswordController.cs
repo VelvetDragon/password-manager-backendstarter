@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+    Program Author:  Suwan Aryal
+    USM ID: w10168297
+    Assignment: Password Manager, Part 2, Back-End
+    
+    Description:
+        This class handles all CRUD operations for password entries.
+*/
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -22,13 +30,20 @@ namespace CSC317PassManagerP2Starter.Modules.Controllers
          * The following functions need to be completed.
          */
         //Used to copy the passwords over to the Row Binders.
+
+        // Constructor
+        public PasswordController()
+        {
+            
+        }
         public void PopulatePasswordView(ObservableCollection<PasswordRow> source, string search_criteria = "")
         {
             //Complete definition of PopulatePasswordView here.
             source.Clear();
+
             foreach (var password in _passwords)
             {
-                if (string.IsNullOrEmpty(search_criteria) || password.PlatformName.ToLower() == search_criteria.ToLower())
+                if (string.IsNullOrEmpty(search_criteria) || password.PlatformName.ToLower().Contains(search_criteria.ToLower()))
                 {
                     source.Add(new PasswordRow(password));
                 }
@@ -41,20 +56,27 @@ namespace CSC317PassManagerP2Starter.Modules.Controllers
         public void AddPassword(string platform, string username, string password)
         {
             //Complete definition of AddPassword here.
-            var currentUser = App.LoginController.GetCurrentUser();
-            if (currentUser != null)
+            var curr = App.LoginController.GetCurrentUser();
+            if (curr != null)
             {
-                _passwords.Add(new PasswordModel(counter++, currentUser.ID, platform, password, Tuple.Create(currentUser.Key, currentUser.IV)));
+                _passwords.Add(new PasswordModel
+                {
+                    ID = counter++,
+                    UserID = curr.ID,
+                    PlatformName = platform,
+                    PlatformUserName = username,
+                    PasswordText = PasswordCrypto.Encrypt(password, Tuple.Create(curr.Key, curr.IV))
+                });
             }
         }
 
-        public PasswordModel? GetPassword(int ID)
+        public PasswordModel? GetPassword(int id)
         {
             //Complete definition of GetPassword here.
             
             foreach (var password in _passwords)
             {
-                if (password.ID == ID)
+                if (password.ID == id)
                 {
                     return password;
                 }
@@ -98,12 +120,51 @@ namespace CSC317PassManagerP2Starter.Modules.Controllers
             //Generate a set of random passwords for the test user.
             //Called in Password List Page.
             var curr = App.LoginController.GetCurrentUser();
+            //returning nothing if the length is > 0 to avoid duplicating everytime.
+
+            if (_passwords.Count > 0)
+            {
+                return;
+            }
+
             if (curr != null)
             {
-                _passwords.Add(new PasswordModel(counter++, curr.ID, "USM Soar", "usm123", Tuple.Create(curr.Key, curr.IV)));
-                _passwords.Add(new PasswordModel(counter++, curr.ID, "Facebook", "su123", Tuple.Create(curr.Key, curr.IV)));
-                _passwords.Add(new PasswordModel(counter++, curr.ID, "Google", "aryal123", Tuple.Create(curr.Key, curr.IV)));
-                _passwords.Add(new PasswordModel(counter++, curr.ID, "Pinterest", "mypass123", Tuple.Create(curr.Key, curr.IV)));
+                _passwords.Add(new PasswordModel
+                {
+                    ID = counter++,
+                    UserID = curr.ID,
+                    PlatformName = "USM Soar",
+                    PlatformUserName = "su1usm.edu",
+                    PasswordText = PasswordCrypto.Encrypt("su123", Tuple.Create(curr.Key, curr.IV))
+                });
+
+                _passwords.Add(new PasswordModel
+                {
+                    ID = counter++,
+                    UserID = curr.ID,
+                    PlatformName = "Facebook",
+                    PlatformUserName = "suwanFB",
+                    PasswordText = PasswordCrypto.Encrypt("pass123fb", Tuple.Create(curr.Key, curr.IV))
+                });
+                _passwords.Add(new PasswordModel
+                {
+                    ID = counter++,
+                    UserID = curr.ID,
+                    PlatformName = "Instagram",
+                    PlatformUserName = "instaSu1",
+                    PasswordText = PasswordCrypto.Encrypt("su1234", Tuple.Create(curr.Key, curr.IV))
+                });
+
+                _passwords.Add(new PasswordModel
+                {
+                    ID = counter++,
+                    UserID = curr.ID,
+                    PlatformName = "Pinterest",
+                    PlatformUserName = "pin1",
+                    PasswordText = PasswordCrypto.Encrypt("pin1234", Tuple.Create(curr.Key, curr.IV))
+                });
+
+                
 
             }
         }

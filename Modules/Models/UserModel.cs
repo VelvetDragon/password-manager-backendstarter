@@ -1,4 +1,13 @@
-﻿using System;
+﻿/*
+    Program Author:  Suwan Aryal
+    USM ID: w10168297
+    Assignment: Password Manager, Part 2, Back-End
+    
+    Description:
+        This class defines the UserModel class with user's data
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

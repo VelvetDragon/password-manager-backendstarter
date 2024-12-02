@@ -1,4 +1,13 @@
-﻿using CSC317PassManagerP2Starter.Modules.Models;
+﻿/*
+    Program Author:  Suwan Aryal
+    USM ID: w10168297
+    Assignment: Password Manager, Part 2, Back-End
+    
+    Description:
+        This class manages user authentication by validating inputted text in the login form.
+*/
+
+using CSC317PassManagerP2Starter.Modules.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +29,7 @@ namespace CSC317PassManagerP2Starter.Modules.Controllers
         //creating a dummy user to test
         public LoginController()
         {
-            var keyReturned = PasswordCrypto.GenKey();
+            var keyReturned = PasswordCrypto.GenKey(); // from the problem doc genkey returns tuple containing the key and IV's
             _user = new User
             {
                 ID = 1,
@@ -69,7 +78,7 @@ namespace CSC317PassManagerP2Starter.Modules.Controllers
             else
             {
                 _loggedIn = true;
-                return AuthenticationError.NONE;
+                return AuthenticationError.NONE; //here the login is verified
             }  
             
         }

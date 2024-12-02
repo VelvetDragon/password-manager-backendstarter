@@ -1,4 +1,14 @@
+/*
+    Program Author:  Suwan Aryal
+    USM ID: w10168297
+    Assignment: Password Manager, Part 2, Back-End
+    
+    Description:
+        This class manages the login interface, handling user input and authentication.
+*/
+
 using CSC317PassManagerP2Starter.Modules.Controllers;
+
 namespace CSC317PassManagerP2Starter.Modules.Views;
 
 public partial class LoginView : ContentPage
@@ -16,7 +26,7 @@ public partial class LoginView : ContentPage
 
         if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
         {
-            ShowErrorMessage("Please fill out all fields.");
+            ShowErrorMessage("Fields are empty. Please fill all the fields");
             return;
         }
 
